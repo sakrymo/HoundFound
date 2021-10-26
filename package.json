@@ -2,11 +2,15 @@
   "name": "js-02-dog-api-ajax-popmotion",
   "version": "1.0.0",
   "description": "",
-  "main": "script.js",
+  "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "parcel": "^2.0.0",
+    "popmotion": "^10.0.2"
+  }
 }
