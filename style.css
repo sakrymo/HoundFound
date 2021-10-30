@@ -5,9 +5,47 @@
 body {
   margin: 0;
   padding: 0;
-
   background: #00000033;
   color: white;
+  font-family: futura-pt, sans-serif;
+}
+
+.preloader {
+  width: 100%;
+  height: 100%;
+  background: green;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  transition: all .5s ease;
+}
+
+.preloader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.preloader-icon {
+  width: 72px;
+}
+
+.placeholder-animation {
+  width: 16px;
+  height: 16px;
+  position: relative;
+  background: yellow;
+  border-radius: 50%;
+  animation: placeholder 0.3s infinite alternate;
+}
+
+@keyframes placeholder {
+  0% { left: -150%; }
+  100% { left: 150% }
 }
 
 .counter {
@@ -27,13 +65,13 @@ body {
 
 .bg-img-container {
   display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
   height: 100%;
   position: fixed;
   top: 0;
   left: 0;
-  justify-content: center;
-  align-items: center;
   z-index: -1;
   background: #222 no-repeat center/cover;
 }
@@ -45,6 +83,187 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(darkgreen, black);
-  opacity: 0.7;
+  background: linear-gradient(rgb(25, 77, 25), black);
+  opacity: 0.85;
+}
+
+.bg-img-loading-tracker {
+  opacity: 0;
+}
+
+.btn {
+  border-radius: 7px;
+  background-color: rgb(0, 165, 69);
+  background-image: linear-gradient(180deg, rgba(212,248,174,0.34) 0%, rgba(20,84,75,0.34) 100%);
+  box-shadow: 4.243px 4.243px 13.6px 6.4px rgba(89, 247, 135, 0.28),-6.364px -6.364px 29.64px 8.36px rgba(12, 125, 66, 0.48), inset 0 0 8px 2px rgba(103, 226, 72, 0.8);
+  padding: 10px 50px;
+  border: none;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: futura-pt, sans-serif;
+  font-weight: 600;
+  text-align: center;
+  align-self: center;
+}
+
+.btn:hover {
+  filter: brightness(1.15)
+}
+
+.app-home-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+}
+
+.app-title {
+  text-align: center;
+  font-family: 'Spartan', sans-serif;
+  margin: 0;
+  font-size: 52px;
+  color: #14ff69;
+  margin-top: 70px;
+  letter-spacing: -0.04em;
+}
+
+.app-subheading {
+  text-align: center;
+  margin: 0;
+  font-weight: 600;
+  font-size: 32px;
+  margin-bottom: 12vh;
+}
+
+.app-actions {
+  display: flex;
+  flex-flow: column;
+  min-width: 600px;
+}
+
+.divider {
+  display: flex;
+  justify-content: stretch;
+  gap: 10px;
+  margin: 50px 0;
+}
+
+.divider-text {
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.divider-line {
+  flex: 1;
+  border: 0;
+  background: rgba(255,255,255,0.2);
+  height: 3px;
+}
+
+.bg-img-credit {
+  position: absolute;
+  bottom: 15px;
+  left: 20px; 
+}
+
+.photo-credit-title {
+  display: block;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color .3s ease;
+  color: white;
+}
+
+.photo-credit-author {
+  font-weight: bold;
+  cursor: pointer;
+  transition: color .3s ease;
+  text-decoration: underline;
+}
+
+.photo-credit-title:hover, .photo-credit-author:hover {
+  color: #6affa0;
+}
+
+.breed-searchbar-row {
+  display: flex;
+  column-gap: 20px;
+}
+
+.breed-searchbar-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  margin: auto;
+}
+
+#breed-searchbar {
+  height: 50px;
+  width: 100%;
+  border-radius: 50px;
+  font-size: 21px;
+  padding-left: 60px;
+  font-family: futura-pt, sans-serif;
+  border: none;
+  outline: none;
+  text-transform: capitalize;
+}
+
+#breed-searchbar:focus {
+  outline: none;
+  border: none;
+  box-shadow: inset 0 0 10px #222222;
+}
+
+.breed-searchbar-icon {
+  fill: #444444;
+  width: 24px;
+  position: absolute;
+  left: 20px;
+}
+
+.breed-searchbar-dropdown-toggle {
+  flex: none;
+  border: none;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  width: 0; 
+  height: 0;
+	border-width: 10px 10px 0px 10px;
+	border-color: #555 transparent transparent transparent;
+	border-style: solid;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  position: absolute;
+  right: 25px;
+}
+
+#breed-searchbar:valid + .breed-searchbar-label {
+  left: 5px;
+  top: -25px;
+  font-size: 16px;
+  color: white;
+  font-weight: 600;
+  opacity: 0.9;
+  color: #6affa0;
+}
+
+.breed-searchbar-label {
+  flex: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 60px;
+  color: red;
+  font-size: 21px;
+  pointer-events: none;
+  color: #777;
+  transition: all .3s ease;
 }

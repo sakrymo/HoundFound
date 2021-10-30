@@ -30,8 +30,9 @@
 //     $root.innerHTML += `<div class="circle" style="transform: translateY(${Math.sin(latest) * 100 + 10 * latest}px) translateX(-${Math.cos(latest) * 100 + 10 * latest}px)"></div>`
 //   }
 // })
+
 const PIXABAY_API_KEY = '9324111-d9394a0e56f6eb524da75f703'
-const PIXABAY_RANDOM_DOG_URL = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=dog&image_type=photo&orientation=horizontal&per_page=200&editors_choice=true`
+const PIXABAY_RANDOM_DOG_URL = `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=dog&image_type=photo&orientation=horizontal&per_page=200&editors_choice=true&category=animals`
 const DOG_API_RANDOM_URL = 'https://dog.ceo/api/breeds/image/random'
 
 fetch(DOG_API_RANDOM_URL)
@@ -53,15 +54,22 @@ fetch(PIXABAY_RANDOM_DOG_URL)
   })
   .then(responseJSON => {
     const dogIndex = Math.floor(Math.random() * responseJSON.hits.length)
-    let dog = responseJSON.hits[dogIndex]
-    let url = dog.largeImageURL
-    
+    const dog = responseJSON.hits[dogIndex]
+    const imgURL = dog.largeImageURL
+
+    document.getElementById('bg-img-author').textContent = dog.user
+    document.getElementById('bg-img-src').href = dog.pageURL
+
     console.log(responseJSON)
-    // const img = document.createElement('img')
-    // img.setAttribute('src', url)
-    // img.setAttribute('alt', dog.tags)
-    // bgImgParent.appendChild(img)
-    bgImg.style.backgroundImage = `url(${url})`
+
+    const loadingTracker = document.createElement('img')
+    loadingTracker.src = imgURL
+    loadingTracker.classList.add('bg-img-loading-tracker')
+    
+    loadingTracker.onload = hidePreloader
+
+    bgImg.appendChild(loadingTracker)
+    bgImg.style.backgroundImage = `url(${imgURL})`
   })
 
 /*
@@ -72,6 +80,10 @@ fetch(PIXABAY_RANDOM_DOG_URL)
 */
 
 const preloader = document.querySelector('.preloader')
+
+function hidePreloader() {
+  preloader.classList.add('hidden')
+}
 
 /*
 888b.    db    .d88b 8  dP .d88b  888b. .d88b. 8    8 8b  8 888b.
@@ -85,3 +97,5 @@ const preloader = document.querySelector('.preloader')
 // add a select menu for the breed
 // make breed searchbar into text input with autosuggest + dropwdown checkboxes
 // use popmotion for some fancy animation maybe for loading?
+// add search icon to searchbar
+// add dropbar button to searchbar

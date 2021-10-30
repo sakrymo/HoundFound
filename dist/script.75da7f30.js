@@ -161,13 +161,13 @@ fetch(PIXABAY_RANDOM_DOG_URL).then(function (response) {
 }).then(function (responseJSON) {
   var dogIndex = Math.floor(Math.random() * responseJSON.hits.length);
   var dog = responseJSON.hits[dogIndex];
-  var url = dog.largeImageURL;
-  console.log(responseJSON); // const img = document.createElement('img')
-  // img.setAttribute('src', url)
-  // img.setAttribute('alt', dog.tags)
-  // bgImgParent.appendChild(img)
-
-  bgImg.style.backgroundImage = "url(".concat(url, ")");
+  var imgURL = dog.largeImageURL;
+  var loadingTracker = document.createElement('img');
+  loadingTracker.src = imgURL;
+  loadingTracker.classList.add('bg-img-loading-tracker');
+  loadingTracker.onload = hidePreloader;
+  bgImg.appendChild(loadingTracker);
+  bgImg.style.backgroundImage = "url(".concat(imgURL, ")");
 });
 /*
 888b. 888b. 8888 8    .d88b.    db    888b. 8888 888b.
@@ -177,6 +177,10 @@ fetch(PIXABAY_RANDOM_DOG_URL).then(function (response) {
 */
 
 var preloader = document.querySelector('.preloader');
+
+function hidePreloader() {
+  alert('loaded');
+}
 /*
 888b.    db    .d88b 8  dP .d88b  888b. .d88b. 8    8 8b  8 888b.
 8wwwP   dPYb   8P    8wdP  8P www 8  .8 8P  Y8 8    8 8Ybm8 8   8

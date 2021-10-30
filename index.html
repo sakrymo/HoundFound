@@ -6,13 +6,20 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+  <link rel="stylesheet" href="https://use.typekit.net/uky6wdb.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@800&display=swap" rel="stylesheet">
   <title>HoundFound - Random dog images [powered by DogCEO's Dog API]</title>
 </head>
 
 <body>
   <div class="preloader">
-    <img class="preloader-icon" src="" alt="HoundFound Icon">
-    <div class="preloader-animation"></div>
+    <img class="preloader-icon" src="img/houndfound-logo.svg" alt="HoundFound Icon">
+    <div class="preloader-animation">
+      <div class="placeholder-animation"></div>
+    </div>
   </div>
 
   <span class="counter"></span>
@@ -35,12 +42,18 @@
       </div>
 
       <div class="breed-search-wrapper">
-        <div class="breed-searchbar-wrapper">
-          <img src="" alt="search icon" class="breed-searchbar-icon">
-          <input type="text" name="breed-searchbar" id="breed-searchbar" placeholder="Search by breed">
-          <button class="breed-searchbar-select"></button>
+        <div class="breed-searchbar-row">
+          <div class="breed-searchbar-wrapper">
+            <svg class="breed-searchbar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168.42 165.98">
+              <path
+                d="M115.3,102.25A63.62,63.62,0,0,0,128,63.05a64.07,64.07,0,1,0-23,50.09l50.64,50.64a7.5,7.5,0,0,0,10.61,0h0a7.49,7.49,0,0,0,0-10.6ZM15.2,68.5a49,49,0,1,1,44.34,44.32A49.07,49.07,0,0,1,15.2,68.5Z" />
+            </svg>
+            <input type="text" name="breed-searchbar" id="breed-searchbar" placeholder="" required title="">
+            <label class="breed-searchbar-label">Search by breed</label>
+            <button class="breed-searchbar-dropdown-toggle" button>
+          </div>
+          <button class="btn">Go</button>
         </div>
-        <button class="btn">Go</button>
     </section>
     </div>
   </main>
@@ -49,8 +62,11 @@
 
   </div>
 
-  <a id="bg-img-src" class="photo-credit-title"></a>
-  <small id="bg-img-author" class="photo-credit-author"></small>
+  <div class="bg-img-credit">
+    <a id="bg-img-src" class="photo-credit-title">Background image</a>
+    by
+    <span id="bg-img-author" class="photo-credit-author">[Background image author]</span>
+  </div>
 
   <div class="bg-img-container"></div>
   <script type="script" src="https://unpkg.com/popmotion/dist/popmotion.global.min.js"></script>
