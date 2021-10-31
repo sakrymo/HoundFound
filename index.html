@@ -31,7 +31,7 @@
     </header>
 
     <section class="app-actions">
-      <button class="btn">Show me a dog</button>
+      <button id="random-btn" class="btn">Show me a dog</button>
 
       <div class="divider">
         <hr class="divider-line">
@@ -59,21 +59,7 @@
       </div>
 
       <div class="breed-searchbar-results-wrapper">
-        <ul class="breed-searchbar-results">
-          <li class="breed-searchbar-results-item">1</li>
-          <li class="breed-searchbar-results-item">2</li>
-          <li class="breed-searchbar-results-item">3</li>
-          <li class="breed-searchbar-results-item">4</li>
-          <li class="breed-searchbar-results-item">1</li>
-          <li class="breed-searchbar-results-item">2</li>
-          <li class="breed-searchbar-results-item">3</li>
-          <li class="breed-searchbar-results-item">4</li>
-          <li class="breed-searchbar-results-item">1</li>
-          <li class="breed-searchbar-results-item">2</li>
-          <li class="breed-searchbar-results-item">3</li>
-          <li class="breed-searchbar-results-item">4</li>
-          <li class="breed-searchbar-results-item">4</li>
-        </ul>
+        <ul class="breed-searchbar-results"></ul>
         <div class="breed-searchbar-results-offset"></div>
       </div>
 
@@ -81,7 +67,8 @@
   </main>
 
   <div class="random-img-result-container">
-
+    <button class="result-btn result-retry">RETRY</button>
+    <button class="result-btn result-close">CLOSE</button>
   </div>
 
   <div class="bg-img-credit">

@@ -181,6 +181,17 @@ const DOG_API_BREEDS = [
   'wolfhound - irish'
 ]
 
+const dogBreedsReadable = DOG_API_BREEDS.map(breed => {
+  if (breed === 'australian - shepherd') return 'australian shepherd'
+  if (breed.includes('-')) {
+    const hyphenPosition = breed.indexOf('-')
+    const firstPart = breed.substr(0, hyphenPosition).trim()
+    const secondPart = breed.slice(hyphenPosition + 1).trim()
+
+    return `${secondPart} ${firstPart}`
+  } else return breed
+})
+
 fetch(DOG_API_RANDOM_URL)
   .then(response => {
     const responseJSON = response.json()
@@ -190,7 +201,47 @@ fetch(DOG_API_RANDOM_URL)
     console.log(responseJSON.message)
   })
 
-// Set background image
+/*
+888b. 888b. 8888 8    .d88b.    db    888b. 8888 888b.
+8  .8 8  .8 8www 8    8P  Y8   dPYb   8   8 8www 8  .8
+8wwP' 8wwK' 8    8    8b  d8  dPwwYb  8   8 8    8wwK'
+8     8  Yb 8888 8888 `Y88P' dP    Yb 888P' 8888 8  Yb
+*/
+
+const preloader = document.querySelector('.preloader')
+
+function hidePreloader () {
+  preloader.classList.add('hidden')
+}
+
+/*
+888b.    db    8b  8 888b. .d88b. 8b   d8    888b. .d88b. .d88b
+8  .8   dPYb   8Ybm8 8   8 8P  Y8 8YbmdP8    8   8 8P  Y8 8P www
+8wwK'  dPwwYb  8  "8 8   8 8b  d8 8  "  8    8   8 8b  d8 8b  d8
+8  Yb dP    Yb 8   8 888P' `Y88P' 8     8    888P' `Y88P' `Y88P'
+*/
+// prettier-ignore
+const dogResultContainer = document.querySelector('.random-img-result-container')
+const randomButton = document.getElementById('random-btn')
+const closeButton = document.querySelector('.result-close')
+const retryButton = document.querySelector('.result-retry')
+
+randomButton.addEventListener('click', showRandomDog)
+closeButton.addEventListener('click', e =>
+  dogResultContainer.classList.remove('visible')
+)
+
+function showRandomDog () {
+  dogResultContainer.classList.add('visible')
+}
+
+/*
+888b.    db    .d88b 8  dP .d88b  888b. .d88b. 8    8 8b  8 888b.
+8wwwP   dPYb   8P    8wdP  8P www 8  .8 8P  Y8 8    8 8Ybm8 8   8
+8   b  dPwwYb  8b    88Yb  8b  d8 8wwK' 8b  d8 8b..d8 8  "8 8   8
+888P' dP    Yb `Y88P 8  Yb `Y88P' 8  Yb `Y88P' `Y88P' 8   8 888P'
+*/
+
 const bgImg = document.querySelector('.bg-img-container')
 
 fetch(PIXABAY_RANDOM_DOG_URL)
@@ -219,24 +270,67 @@ fetch(PIXABAY_RANDOM_DOG_URL)
   })
 
 /*
-888b. 888b. 8888 8    .d88b.    db    888b. 8888 888b.
-8  .8 8  .8 8www 8    8P  Y8   dPYb   8   8 8www 8  .8
-8wwP' 8wwK' 8    8    8b  d8  dPwwYb  8   8 8    8wwK'
-8     8  Yb 8888 8888 `Y88P' dP    Yb 888P' 8888 8  Yb
-*/
+  .d88b. 8888    db    888b. .d88b 8   8 888b.    db    888b.
+  YPwww. 8www   dPYb   8  .8 8P    8www8 8wwwP   dPYb   8  .8
+      d8 8     dPwwYb  8wwK' 8b    8   8 8   b  dPwwYb  8wwK'
+  `Y88P' 8888 dP    Yb 8  Yb `Y88P 8   8 888P' dP    Yb 8  Yb
+  */
+const searchbar = document.getElementById('breed-searchbar')
+const searchResults = document.querySelector('.breed-searchbar-results')
 
-const preloader = document.querySelector('.preloader')
-
-function hidePreloader () {
-  preloader.classList.add('hidden')
+const showResults = () => {
+  searchResults.classList.add('active')
 }
 
-/*
-888b.    db    .d88b 8  dP .d88b  888b. .d88b. 8    8 8b  8 888b.
-8wwwP   dPYb   8P    8wdP  8P www 8  .8 8P  Y8 8    8 8Ybm8 8   8
-8   b  dPwwYb  8b    88Yb  8b  d8 8wwK' 8b  d8 8b..d8 8  "8 8   8
-888P' dP    Yb `Y88P 8  Yb `Y88P' 8  Yb `Y88P' `Y88P' 8   8 888P'
-*/
+const hideResults = () => {
+  searchResults.classList.remove('active')
+}
+// prettier-ignore
+const filterBreeds = q =>
+  dogBreedsReadable
+    .map(str => str.toUpperCase())
+    .filter(str => str
+                    .split(' ')
+                    .filter((e, i) => e.startsWith(q.trim().split(' ')[i]) ||
+                                      e.startsWith(q.trim().split(' ')[0]))
+                    .length >= q.trim().split(' ').length)
+
+searchbar.addEventListener('keyup', _e => {
+  while (searchResults.firstChild) searchResults.firstChild.remove()
+  const query = searchbar.value.toUpperCase()
+
+  for (result of filterBreeds(query)) {
+    let element = document.createElement('li')
+
+    element.classList.add('breed-searchbar-results-item')
+    element.innerHTML = result
+      .replace(query, `<span class="search-query">${query}</span>`)
+      .toLowerCase()
+
+    searchResults.appendChild(element)
+
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //! BUG: SPACES ARE NOT VISIBLE IN FRONT OF SPAN ELEMENT
+    //! ALSO ALPHABETIC ORDER SHOULD BE CHANGED TO BEST MATCH FIRST
+    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  }
+
+  if (!searchbar.value) console.log('empty')
+  if (!searchResults.firstChild && !dogBreedsReadable.includes(searchbar.value))
+    searchbar.classList.add(invalid)
+})
+
+searchbar.addEventListener('keydown', e => {
+  if (e.key.toLowerCase() === 'enter' && searchResults.firstChild)
+    searchbar.value = searchResults.firstChild.textContent
+})
+
+searchResults.addEventListener('click', e => {
+  if (e.target.classList.contains('breed-searchbar-results-item'))
+    searchbar.value = e.target.textContent
+})
+
+
 
 // TODO:
 // make breed searchbar into text input with autosuggest + dropwdown checkboxes
