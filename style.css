@@ -163,7 +163,7 @@ body {
 }
 
 .bg-img-credit {
-  position: absolute;
+  position: fixed;
   bottom: 15px;
   left: 20px; 
 }
@@ -227,24 +227,6 @@ body {
   left: 20px;
 }
 
-.breed-searchbar-dropdown-toggle {
-  flex: none;
-  border: none;
-  width: 20px;
-  height: 20px;
-  background: transparent;
-  width: 0; 
-  height: 0;
-	border-width: 10px 10px 0px 10px;
-	border-color: #555 transparent transparent transparent;
-	border-style: solid;
-  margin: 0;
-  padding: 0;
-  outline: none;
-  position: absolute;
-  right: 25px;
-}
-
 #breed-searchbar:valid + .breed-searchbar-label {
   left: 5px;
   top: -25px;
@@ -266,4 +248,100 @@ body {
   pointer-events: none;
   color: #777;
   transition: all .3s ease;
+}
+
+.breed-searchbar-dropdown-toggle {
+  border: none;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  width: 0; 
+  height: 0;
+	border-width: 10px 10px 0px 10px;
+	border-color: #555 transparent transparent transparent;
+	border-style: solid;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+}
+
+.breed-searchbar-dropdown-toggle-wrapper {
+  background: transparent;
+  position: absolute;
+  right: 0;
+  height: 50px;
+  width: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0 50px 50px 0;
+  cursor: pointer;
+}
+
+.breed-searchbar-dropdown-toggle-wrapper:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.breed-searchbar-results-wrapper {
+  background: transparent;
+  display: flex;
+}
+
+.breed-searchbar-results {
+  background: transparent;
+  width: 100%;
+  height: 500px;
+  border-radius: 15px;
+  padding: 0;
+  overflow: hidden;
+  max-height: calc((1em + 25px) * 10);
+  color: #222;
+  overflow-y: scroll;
+}
+
+.breed-searchbar-results-offset {
+  width: 220px;
+  height: auto;
+  background: transparent;
+}
+
+.breed-searchbar-results-item {
+  background: #eee;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  display: block;
+  padding: 0 25px;
+  height: calc(1em + 25px);
+  display: flex;
+  align-items: center;
+}
+
+.breed-searchbar-results-item:nth-child(odd) {
+  background: lightgray;
+}
+
+.breed-searchbar-results-item:first-child {
+  border-radius: 15px 15px 0 0;
+}
+
+.breed-searchbar-results-item:last-child {
+  border-radius: 0 0 15px 15px;
+}
+
+.random-img-result-container {
+  background: #14ff69;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  right: -99%;
+  transition: all .5s ease;
+  z-index: 2;
+}
+
+.random-img-result-container.x {
+  right: 0;
 }
