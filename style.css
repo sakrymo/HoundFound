@@ -270,6 +270,10 @@ body {
   cursor: pointer;
 }
 
+.breed-searchbar-dropdown-toggle.active {
+  transform: rotate(180deg);
+}
+
 .breed-searchbar-dropdown-toggle-wrapper {
   background: transparent;
   position: absolute;
