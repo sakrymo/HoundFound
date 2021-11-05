@@ -227,12 +227,28 @@ const closeButton = document.querySelector('.result-close')
 const retryButton = document.querySelector('.result-retry')
 
 randomButton.addEventListener('click', showRandomDog)
+document
+  .querySelector('.result-btn.result-retry')
+  .addEventListener('click', showRandomDog)
+
 closeButton.addEventListener('click', _e =>
   dogResultContainer.classList.remove('visible')
 )
 
 function showRandomDog () {
   dogResultContainer.classList.add('visible')
+  fetch('https://dog.ceo/api/breeds/image/random')
+    .then(response => response.json())
+    .then(responseJSON => {
+      document
+        .querySelectorAll('.dog-image')
+        ?.forEach(element => element.remove())
+
+      const randomDogImg = document.createElement('img')
+      randomDogImg.src = responseJSON.message
+      randomDogImg.className = 'dog-image'
+      dogResultContainer.append(randomDogImg)
+    })
 }
 
 /*
@@ -274,20 +290,15 @@ fetch(PIXABAY_RANDOM_DOG_URL)
   YPwww. 8www   dPYb   8  .8 8P    8www8 8wwwP   dPYb   8  .8
       d8 8     dPwwYb  8wwK' 8b    8   8 8   b  dPwwYb  8wwK'
   `Y88P' 8888 dP    Yb 8  Yb `Y88P 8   8 888P' dP    Yb 8  Yb
-  */
+*/
 const searchbar = document.getElementById('breed-searchbar')
 const searchResults = document.querySelector('.breed-searchbar-results')
 const dropdownButton = document.querySelector(
   '.breed-searchbar-dropdown-toggle-wrapper'
 )
 
-const showResults = () => {
-  searchResults.classList.add('active')
-}
-
-const hideResults = () => {
-  searchResults.classList.remove('active')
-}
+const showResults = () => searchResults.classList.add('active')
+const hideResults = () => searchResults.classList.remove('active')
 // prettier-ignore
 const filterBreeds = q => {
   return (
@@ -298,71 +309,131 @@ const filterBreeds = q => {
                       .filter((e, i) => e.startsWith(q.trim().split(' ')[i]) ||
                                         e.startsWith(q.trim().split(' ')[0]))
                       .length >= q.trim().split(' ').length)
+                      .sort((a, b) => a.indexOf(q) > b.indexOf(q))
   )
 }
 
 dropdownButton.addEventListener('click', e => console.log(e.target))
 
 // Display search suggestions & indicate invalid input
-searchbar.addEventListener('keyup', _e => {
-  while (searchResults.firstChild) searchResults.firstChild.remove()
-  const removeMultipleSpaces = str => str.replace(/\s\s+/g, ' ')
-  searchbar.value = removeMultipleSpaces(searchbar.value)
-  const query = searchbar.value.toUpperCase()
+searchbar.addEventListener('keyup', e => {
+  const excludedKeys = ['arrowdown', 'arrowup']
+  if (!excludedKeys.includes(e.key.toLowerCase())) {
+    while (searchResults.firstChild) searchResults.firstChild.remove()
+    const removeMultipleSpaces = str => str.replace(/\s\s+/g, ' ')
 
-  // Display search suggestions
-  for (result of filterBreeds(query)) {
-    let element = document.createElement('li')
-    const queryWithSpaces = fixSpaces(query, result)
+    searchbar.value = removeMultipleSpaces(searchbar.value)
+    const query = searchbar.value.toUpperCase()
 
-    element.classList.add('breed-searchbar-results-item')
-    element.innerHTML = result
-      .replace(query, `<span class="search-query">${queryWithSpaces}</span>`)
-      .toLowerCase()
+    // Display search suggestions
+    for (result of filterBreeds(query)) {
+      let element = document.createElement('li')
+      const queryWithSpaces = fixSpaces(query, result)
 
-    const queryEndsWithSpace =
-      query.charAt(query.length - 1) === ' ' &&
-      query.trimEnd() !== result.split(' ')[0]
+      element.classList.add('breed-searchbar-results-item')
+      element.innerHTML = result
+        .replace(query, `<span class="search-query">${queryWithSpaces}</span>`)
+        .toLowerCase()
 
-    if (queryEndsWithSpace) continue
-    else searchResults.appendChild(element)
+      const queryEndsWithSpace =
+        query.charAt(query.length - 1) === ' ' &&
+        query.trimEnd() !== result.split(' ')[0]
+
+      if (queryEndsWithSpace) continue
+      else searchResults.appendChild(element)
+    }
+
+    function fixSpaces (query, str) {
+      const words = str.split(' ')
+      const isStringInSecondWord = str.indexOf(query) > words[0].length
+      const isStringAtTheEndOfFirstWord =
+        str.indexOf(query) + query.length + 1 === ''
+      const whichWordMatchesQuery = words.indexOf(query)
+      const queryWithSpace = { '-1': query, '0': query + ' ', '1': ' ' + query }
+
+      if (isStringAtTheEndOfFirstWord) return queryWithSpace['0']
+      if (isStringInSecondWord) return queryWithSpace['1']
+      return queryWithSpace[whichWordMatchesQuery.toString()]
+    }
+
+    // Validate input
+    const searchbarIsEmpty = !searchbar.value
+    const searchQueryIsInvalid =
+      !searchResults.firstChild && !dogBreedsReadable.includes(searchbar.value)
+    const queryIsPerfectMatch =
+      searchbar.value.toLowerCase() ===
+      searchResults.firstChild?.textContent.trim()
+
+    if (searchResults.firstChild) showResults()
+    if (searchbarIsEmpty || queryIsPerfectMatch) hideResults()
   }
-
-  function fixSpaces (query, str) {
-    const words = str.split(' ')
-    const isStringInSecondWord = str.indexOf(query) > words[0].length
-    const isStringAtTheEndOfFirstWord =
-      str.indexOf(query) + query.length + 1 === ''
-    const whichWordMatchesQuery = words.indexOf(query)
-    const queryWithSpace = { '-1': query, '0': query + ' ', '1': ' ' + query }
-
-    if (isStringAtTheEndOfFirstWord) return queryWithSpace['0']
-    if (isStringInSecondWord) return queryWithSpace['1']
-    return queryWithSpace[whichWordMatchesQuery.toString()]
-  }
-
-  // Validate input
-  const searchbarIsEmpty = !searchbar.value
-  const searchQueryIsInvalid =
-    !searchResults.firstChild && !dogBreedsReadable.includes(searchbar.value)
-
-  if (searchbarIsEmpty) console.log('empty')
-  if (searchQueryIsInvalid) searchbar.classList.add(invalid)
+  // if (searchQueryIsInvalid) searchbar.classList.add('invalid')
 })
+
+const clearHighlightedResult = () => {
+  document
+    .querySelectorAll('.breed-searchbar-results-item.selected')
+    .forEach(element => element.classList.remove('selected'))
+}
+
+const highlightResult = direction => {
+  const selectedIndex = Array.from(searchResults.childNodes)
+    .map(e => e.className)
+    .indexOf('breed-searchbar-results-item selected')
+
+  const directionValues = { next: 1, previous: -1 }
+  const offset = directionValues[direction] || 0
+
+  const lastResultIsHighlighted =
+    selectedIndex + 1 === searchResults.childElementCount
+  const firstResultIsHighlighted = selectedIndex - 1 === -1
+  const noResultIsHighlighted = selectedIndex === -1
+
+  const [firstResult, lastResult, nextResult] = [
+    searchResults.firstChild,
+    searchResults.lastChild,
+    searchResults.childNodes[selectedIndex + offset]
+  ]
+
+  if (noResultIsHighlighted) {
+    clearHighlightedResult()
+    firstResult.classList.add('selected')
+  } else if (lastResultIsHighlighted && direction === 'next') {
+    clearHighlightedResult()
+    firstResult.classList.add('selected')
+  } else if (firstResultIsHighlighted && direction === 'previous') {
+    clearHighlightedResult()
+    lastResult.classList.add('selected')
+  } else {
+    clearHighlightedResult()
+    nextResult.classList.add('selected')
+  }
+}
 
 // Searchbar keyboard navigation
 searchbar.addEventListener('keydown', e => {
   if (searchResults.firstChild) {
     switch (e.key.toLowerCase()) {
       case 'enter':
-        searchbar.value = searchResults.firstChild.textContent
+        searchbar.value =
+          document.querySelector('.breed-searchbar-results-item.selected')
+            ?.textContent || searchResults.firstChild.textContent
+        hideResults()
         break
-
+      case 'arrowdown':
+        highlightResult('next')
+        break
+      case 'arrowup':
+        highlightResult('previous')
+        break
       default:
+        // alert(e.key.toLowerCase())
         break
     }
   }
 })
+
+searchResults.addEventListener('mouseover', clearHighlightedResult)
 
 searchResults.addEventListener('click', e => {
   if (e.target.classList.contains('breed-searchbar-results-item'))
@@ -370,7 +441,12 @@ searchResults.addEventListener('click', e => {
 })
 
 // TODO:
-// maybe sort search results by alphabetic and by where the query is found closest to start of string
-// add keyboard navigation to searchbar
+// when excess spaces are removed from searchbar input prevent it from jumping
+// make scrolling follow the result highlighted with keyboard
+// // make enter submit the highlighted result
+// disable hover on arrow press
 // use popmotion for some fancy animation maybe for loading?
 // try SimpleBar for the dropdown scrolling
+// make the placeholder moving to top animation shorter when the choice is clicked not typed
+// seperate stuff into functions to make things readable
+// turn the search results to title case with javascript

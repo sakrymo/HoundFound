@@ -40,7 +40,13 @@ body {
   position: relative;
   background: yellow;
   border-radius: 50%;
-  animation: placeholder 0.3s infinite alternate;
+  -webkit-animation: placeholder 0.3s infinite alternate;
+          animation: placeholder 0.3s infinite alternate;
+}
+
+@-webkit-keyframes placeholder {
+  0% { left: -150%; }
+  100% { left: 150% }
 }
 
 @keyframes placeholder {
@@ -109,7 +115,8 @@ body {
 }
 
 .btn:hover {
-  filter: brightness(1.15)
+  -webkit-filter: brightness(1.15);
+          filter: brightness(1.15)
 }
 
 .app-home-screen {
@@ -190,7 +197,8 @@ body {
 
 .breed-searchbar-row {
   display: flex;
-  column-gap: 20px;
+  -moz-column-gap: 20px;
+       column-gap: 20px;
 }
 
 .breed-searchbar-wrapper {
@@ -305,7 +313,41 @@ body {
   overflow: hidden;
   max-height: calc((1em + 25px) * 10);
   color: #222;
-  overflow-y: scroll;
+  overflow-y: auto;
+  visibility: hidden;
+  padding-right: 5px;
+}
+
+.breed-searchbar-results::-webkit-scrollbar {
+  width: 10px;
+  height: 7px;
+}
+
+.breed-searchbar-results::-webkit-scrollbar-button {
+  width: 15px;
+  height: 15px;
+}
+.breed-searchbar-results::-webkit-scrollbar-thumb {
+  background: #2ca556;
+  border-radius: 5px
+}
+.breed-searchbar-results::-webkit-scrollbar-thumb:hover {
+  background: #14ff69;
+}
+.breed-searchbar-results::-webkit-scrollbar-thumb:active {
+  background: #14ff69;
+}
+.breed-searchbar-results::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 30px;
+}
+
+.breed-searchbar-results::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.breed-searchbar-results.active {
+  visibility: visible;
 }
 
 .breed-searchbar-results-offset {
@@ -328,12 +370,6 @@ body {
   cursor: pointer;
 }
 
-.breed-searchbar-results-item:hover {
-  background: #e7e7e7;
-  background: #10a346;
-  color: #eee;
-}
-
 .breed-searchbar-results-item:nth-child(odd) {
   background: lightgray;
 }
@@ -343,6 +379,13 @@ body {
   background: #10a346;
   color: #eee;
 } 
+
+.breed-searchbar-results-item:hover,
+.breed-searchbar-results-item.selected {
+  background: #e7e7e7;
+  background: #10a346;
+  color: #eee;
+}
 
 .breed-searchbar-results-item:first-child {
   border-radius: 15px 15px 0 0;
@@ -376,3 +419,6 @@ body {
   white-space: pre;
 }
 
+.simplebar-scrollbar::before {
+  background-color: red;
+}
