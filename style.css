@@ -411,11 +411,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-flow: column-reverse;
 }
 
 .random-img-result-container.visible {
   right: 0;
-  background: #222;
+  background: #171717ee;
 }
 
 .search-query {
@@ -425,4 +426,38 @@ body {
 
 .simplebar-scrollbar::before {
   background-color: red;
+}
+
+.dog-image {
+  height: 50vh;
+}
+
+.result-btn {
+  width: 72px;
+  height: 72px;
+  background: rgb(0, 165, 69);
+  outline: none;
+  border: none;
+  margin: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: transparent;
+}
+
+.result-retry {
+  background-image: url('./img/refresh-icon.svg');
+  background-position: center;
+  background-size: 55%;
+  background-repeat: no-repeat;
+}
+
+.result-close {
+  background-image: url('./img/close-icon.svg');
+  background-position: center;
+  background-size: 65%;
+  background-repeat: no-repeat;
+}
+
+.result-btn:hover {
+  background-color:#14ff69;
 }

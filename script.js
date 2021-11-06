@@ -501,3 +501,4 @@ searchResults.addEventListener('mouseover', clearHighlightedResult)
 // seperate stuff into functions to make things readable
 // turn the search results to title case with javascript
 // style the dog image window
+// keep a history of the dog results so you can go back and forwards or see the source images
