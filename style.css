@@ -278,8 +278,8 @@ body {
   cursor: pointer;
 }
 
-.breed-searchbar-dropdown-toggle.active {
-  transform: rotate(180deg);
+.breed-searchbar-dropdown-toggle-wrapper.active .breed-searchbar-dropdown-toggle {
+  transform: rotate(180deg) translateY(1px);
 }
 
 .breed-searchbar-dropdown-toggle-wrapper {
@@ -327,16 +327,20 @@ body {
   width: 15px;
   height: 15px;
 }
+
 .breed-searchbar-results::-webkit-scrollbar-thumb {
   background: #2ca556;
   border-radius: 5px
 }
+
 .breed-searchbar-results::-webkit-scrollbar-thumb:hover {
   background: #14ff69;
 }
+
 .breed-searchbar-results::-webkit-scrollbar-thumb:active {
   background: #14ff69;
 }
+
 .breed-searchbar-results::-webkit-scrollbar-track {
   background: transparent;
   border-radius: 30px;

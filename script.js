@@ -209,10 +209,7 @@ fetch(DOG_API_RANDOM_URL)
 */
 
 const preloader = document.querySelector('.preloader')
-
-function hidePreloader () {
-  preloader.classList.add('hidden')
-}
+const hidePreloader = () => preloader.classList.add('hidden')
 
 /*
 888b.    db    8b  8 888b. .d88b. 8b   d8    888b. .d88b. .d88b
@@ -247,6 +244,7 @@ function showRandomDog () {
       const randomDogImg = document.createElement('img')
       randomDogImg.src = responseJSON.message
       randomDogImg.className = 'dog-image'
+
       dogResultContainer.append(randomDogImg)
     })
 }
@@ -297,9 +295,33 @@ const dropdownButton = document.querySelector(
   '.breed-searchbar-dropdown-toggle-wrapper'
 )
 
+const handleSearchResultIntersection = (entries, _observer) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) entry.target.scrollIntoView(false)
+  })
+}
+
+const searchResultIntersectionObserver = new IntersectionObserver(
+  handleSearchResultIntersection,
+  {
+    root: searchResults,
+    rootMargin: '0px',
+    threshold: 1.0
+  }
+)
+
+// Utility functions
+const removeMultipleSpaces = str => str.replace(/\s\s+/g, ' ')
+const toTitleCase = str =>
+  str
+    .split(' ')
+    .map(s => s[0].toUpperCase() + s.substr(1).toLowerCase())
+    .join(' ')
+
 const showResults = () => searchResults.classList.add('active')
 const hideResults = () => searchResults.classList.remove('active')
-// prettier-ignore
+const toggleResults = () => searchResults.classList.toggle('active')
+//prettier-ignore
 const filterBreeds = q => {
   return (
     dogBreedsReadable
@@ -313,20 +335,34 @@ const filterBreeds = q => {
   )
 }
 
-dropdownButton.addEventListener('click', e => console.log(e.target))
+// Rotate dropdown button when search suggestions appear
+dropdownButton.addEventListener('click', toggleResults)
+
+const updateDropdownIcon = mutations => {
+  for (const mutation of mutations) {
+    if (mutation.target.classList.contains('active'))
+      dropdownButton.classList.add('active')
+    else dropdownButton.classList.remove('active')
+  }
+}
+
+const dropdownObserver = new MutationObserver(updateDropdownIcon)
+dropdownObserver.observe(searchResults, { attributes: true })
+
+// Hide search suggestions on focus out of searchbar
+// ! BUG: DOESN'T WORK WITH CLICK EVENT LISTENER ON RESULT ITEM
+// ! searchbar.addEventListener('focusout', hideResults)
 
 // Display search suggestions & indicate invalid input
 searchbar.addEventListener('keyup', e => {
   const excludedKeys = ['arrowdown', 'arrowup']
   if (!excludedKeys.includes(e.key.toLowerCase())) {
     while (searchResults.firstChild) searchResults.firstChild.remove()
-    const removeMultipleSpaces = str => str.replace(/\s\s+/g, ' ')
-
     searchbar.value = removeMultipleSpaces(searchbar.value)
     const query = searchbar.value.toUpperCase()
 
     // Display search suggestions
-    for (result of filterBreeds(query)) {
+    for (const result of filterBreeds(query)) {
       let element = document.createElement('li')
       const queryWithSpaces = fixSpaces(query, result)
 
@@ -334,6 +370,11 @@ searchbar.addEventListener('keyup', e => {
       element.innerHTML = result
         .replace(query, `<span class="search-query">${queryWithSpaces}</span>`)
         .toLowerCase()
+      element.addEventListener('click', e => {
+        searchbar.value = removeMultipleSpaces(e.target.textContent)
+        hideResults()
+      })
+      // searchResultIntersectionObserver.observe(element)
 
       const queryEndsWithSpace =
         query.charAt(query.length - 1) === ' ' &&
@@ -356,20 +397,25 @@ searchbar.addEventListener('keyup', e => {
       return queryWithSpace[whichWordMatchesQuery.toString()]
     }
 
-    // Validate input
+    // Validate/show/hide input
     const searchbarIsEmpty = !searchbar.value
-    const searchQueryIsInvalid =
-      !searchResults.firstChild && !dogBreedsReadable.includes(searchbar.value)
+    const searchQueryIsInvalid = !searchResults.firstChild
     const queryIsPerfectMatch =
       searchbar.value.toLowerCase() ===
       searchResults.firstChild?.textContent.trim()
 
     if (searchResults.firstChild) showResults()
     if (searchbarIsEmpty || queryIsPerfectMatch) hideResults()
+    if (searchQueryIsInvalid) searchbar.classList.add('invalid')
+    else searchbar.classList.remove('invalid')
+
+    // Track if result items are in view
+    for (const item of searchResults.childNodes) {
+    }
   }
-  // if (searchQueryIsInvalid) searchbar.classList.add('invalid')
 })
 
+// Highlight search suggestion functions
 const clearHighlightedResult = () => {
   document
     .querySelectorAll('.breed-searchbar-results-item.selected')
@@ -394,19 +440,24 @@ const highlightResult = direction => {
     searchResults.lastChild,
     searchResults.childNodes[selectedIndex + offset]
   ]
-
+  // # REFACTOR THIS
+  searchResultIntersectionObserver.disconnect()
   if (noResultIsHighlighted) {
     clearHighlightedResult()
     firstResult.classList.add('selected')
+    firstResult.scrollIntoView()
   } else if (lastResultIsHighlighted && direction === 'next') {
     clearHighlightedResult()
     firstResult.classList.add('selected')
+    firstResult.scrollIntoView()
   } else if (firstResultIsHighlighted && direction === 'previous') {
     clearHighlightedResult()
     lastResult.classList.add('selected')
+    lastResult.scrollIntoView()
   } else {
     clearHighlightedResult()
     nextResult.classList.add('selected')
+    searchResultIntersectionObserver.observe(nextResult)
   }
 }
 
@@ -416,8 +467,10 @@ searchbar.addEventListener('keydown', e => {
     switch (e.key.toLowerCase()) {
       case 'enter':
         searchbar.value =
-          document.querySelector('.breed-searchbar-results-item.selected')
-            ?.textContent || searchResults.firstChild.textContent
+          removeMultipleSpaces(
+            document.querySelector('.breed-searchbar-results-item.selected')
+              ?.textContent
+          ) || removeMultipleSpaces(searchResults.firstChild.textContent)
         hideResults()
         break
       case 'arrowdown':
@@ -433,20 +486,18 @@ searchbar.addEventListener('keydown', e => {
   }
 })
 
+// If search result is not visibile scroll into view
 searchResults.addEventListener('mouseover', clearHighlightedResult)
 
-searchResults.addEventListener('click', e => {
-  if (e.target.classList.contains('breed-searchbar-results-item'))
-    searchbar.value = e.target.textContent
-})
-
 // TODO:
-// when excess spaces are removed from searchbar input prevent it from jumping
-// make scrolling follow the result highlighted with keyboard
+// // when excess spaces are removed from searchbar input prevent it from jumping
+// // make scrolling follow the result highlighted with keyboard
+// make enter submit if the searchbar value is valid
 // // make enter submit the highlighted result
+// // make the downwards arrow in search toggle results and also arrow down on keyboard if closed
 // disable hover on arrow press
 // use popmotion for some fancy animation maybe for loading?
-// try SimpleBar for the dropdown scrolling
 // make the placeholder moving to top animation shorter when the choice is clicked not typed
 // seperate stuff into functions to make things readable
 // turn the search results to title case with javascript
+// style the dog image window
